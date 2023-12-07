@@ -204,6 +204,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "avail-subxt",
+ "parity-scale-codec",
  "prettytable",
  "sp-arithmetic 16.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "structopt",
