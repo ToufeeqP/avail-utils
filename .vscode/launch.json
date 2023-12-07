@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'avail-utils'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=avail-utils",
+                    "--package=avail-utils"
+                ],
+                "filter": {
+                    "name": "avail-utils",
+                    "kind": "bin"
+                }
+            },
+            "args": ["--ws_uri", "wss://goldberg.avail.tools:443/ws"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'avail-utils'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=avail-utils",
+                    "--package=avail-utils"
+                ],
+                "filter": {
+                    "name": "avail-utils",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
