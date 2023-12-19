@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use anyhow::Result;
 use avail_subxt::{
     api::{self, runtime_types::pallet_balances::pallet::Call as BalanceCall},
@@ -19,13 +20,34 @@ const ACCT_SEED: &str =
 
 pub async fn batch_transfer() -> Result<()> {
     let recipients = [
-        ("5HostXbk5r1smXVvYUYVNiQCsg39NqRwix4FdVVFLB5UdTSz", 1_000_000_000_000_000_000u64),
-        ("5ESFX6vCcR4vRieHdPYEUi3MKDyNs9FXhhHWgYhJErCoeas7", 1_000_000_000_000_000_000u64),
-        ("5FeZ9qQcknWLexEuo3nXXERcXNzmxQDgF4kG5e2foDCXvXwz", 1_000_000_000_000_000_000u64),
-        ("5Fuedf79TqB6mMWzhu8aazzfPX1mawedb7rLuHpv6iYK2Z6c", 1_000_000_000_000_000_000u64),
-        ("5EFTSpRN2nMZDLjkniBYdmMxquMNm5CLVsrX2V3HHue6QFFF", 1_000_000_000_000_000_000u64),
-        ("5GzpMhmk7o4WfJzmm5DxGTmiioTScQbeUdC2Que5ZfnH511g", 1_000_000_000_000_000_000u64),
-        ("5F7ckS72TB3ftao2BMWxM2YcAAM9WD7tGnwbXWreUtn2t42f", 1_000_000_000_000_000_000u64),
+        (
+            "5HostXbk5r1smXVvYUYVNiQCsg39NqRwix4FdVVFLB5UdTSz",
+            1_000_000_000_000_000_000u64,
+        ),
+        (
+            "5ESFX6vCcR4vRieHdPYEUi3MKDyNs9FXhhHWgYhJErCoeas7",
+            1_000_000_000_000_000_000u64,
+        ),
+        (
+            "5FeZ9qQcknWLexEuo3nXXERcXNzmxQDgF4kG5e2foDCXvXwz",
+            1_000_000_000_000_000_000u64,
+        ),
+        (
+            "5Fuedf79TqB6mMWzhu8aazzfPX1mawedb7rLuHpv6iYK2Z6c",
+            1_000_000_000_000_000_000u64,
+        ),
+        (
+            "5EFTSpRN2nMZDLjkniBYdmMxquMNm5CLVsrX2V3HHue6QFFF",
+            1_000_000_000_000_000_000u64,
+        ),
+        (
+            "5GzpMhmk7o4WfJzmm5DxGTmiioTScQbeUdC2Que5ZfnH511g",
+            1_000_000_000_000_000_000u64,
+        ),
+        (
+            "5F7ckS72TB3ftao2BMWxM2YcAAM9WD7tGnwbXWreUtn2t42f",
+            1_000_000_000_000_000_000u64,
+        ),
     ];
 
     let args = Opts::from_args();

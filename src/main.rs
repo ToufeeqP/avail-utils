@@ -6,6 +6,7 @@ use sp_arithmetic::Perbill;
 use structopt::StructOpt;
 
 mod batch_transfer;
+mod create_pools;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
