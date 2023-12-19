@@ -5,6 +5,8 @@ use prettytable::{row, Table};
 use sp_arithmetic::Perbill;
 use structopt::StructOpt;
 
+mod batch_transfer;
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let start_era = 29;
