@@ -21,7 +21,6 @@ use crate::account_utils::{Account, ACCOUNT_PATH};
 const ACCT_SEED: &str =
     "bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice";
 
-
 pub async fn batch_transfer(amount: u64) -> Result<()> {
     // Read accounts from the file
     let accounts_json = fs::read_to_string(ACCOUNT_PATH)?;
