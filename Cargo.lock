@@ -206,6 +206,8 @@ dependencies = [
  "avail-subxt",
  "parity-scale-codec",
  "prettytable",
+ "serde",
+ "serde_json",
  "sp-arithmetic 16.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "structopt",
  "subxt",

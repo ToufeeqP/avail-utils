@@ -8,6 +8,7 @@ use avail_subxt::{
     AvailConfig, Call, Opts,
 };
 use sp_arithmetic::traits::SaturatedConversion;
+use std::fs;
 use std::str::FromStr;
 use structopt::StructOpt;
 use subxt::{
@@ -15,40 +16,16 @@ use subxt::{
     tx::PairSigner,
 };
 
+use crate::account_utils::{Account, ACCOUNT_PATH};
+
 const ACCT_SEED: &str =
     "bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice";
 
-pub async fn batch_transfer() -> Result<()> {
-    let recipients = [
-        (
-            "5HostXbk5r1smXVvYUYVNiQCsg39NqRwix4FdVVFLB5UdTSz",
-            1_000_000_000_000_000_000u64,
-        ),
-        (
-            "5ESFX6vCcR4vRieHdPYEUi3MKDyNs9FXhhHWgYhJErCoeas7",
-            1_000_000_000_000_000_000u64,
-        ),
-        (
-            "5FeZ9qQcknWLexEuo3nXXERcXNzmxQDgF4kG5e2foDCXvXwz",
-            1_000_000_000_000_000_000u64,
-        ),
-        (
-            "5Fuedf79TqB6mMWzhu8aazzfPX1mawedb7rLuHpv6iYK2Z6c",
-            1_000_000_000_000_000_000u64,
-        ),
-        (
-            "5EFTSpRN2nMZDLjkniBYdmMxquMNm5CLVsrX2V3HHue6QFFF",
-            1_000_000_000_000_000_000u64,
-        ),
-        (
-            "5GzpMhmk7o4WfJzmm5DxGTmiioTScQbeUdC2Que5ZfnH511g",
-            1_000_000_000_000_000_000u64,
-        ),
-        (
-            "5F7ckS72TB3ftao2BMWxM2YcAAM9WD7tGnwbXWreUtn2t42f",
-            1_000_000_000_000_000_000u64,
-        ),
-    ];
+
+pub async fn batch_transfer(amount: u64) -> Result<()> {
+    // Read accounts from the file
+    let accounts_json = fs::read_to_string(ACCOUNT_PATH)?;
+    let accounts: Vec<Account> = serde_json::from_str(&accounts_json)?;
 
     let args = Opts::from_args();
     let client = build_client(args.ws, false).await?;
@@ -57,13 +34,13 @@ pub async fn batch_transfer() -> Result<()> {
     let pair_a = Pair::from_string_with_seed(ACCT_SEED, None)?;
     let signer = PairSigner::<AvailConfig, Pair>::new(pair_a.0);
 
-    let calls: Result<Vec<_>> = recipients
+    let calls: Result<Vec<_>> = accounts
         .iter()
-        .map(|(recipient, amt)| {
-            let account_id = AccountId32::from_str(recipient)?;
+        .map(|account| {
+            let account_id = AccountId32::from_str(&account.address)?;
             Ok(Call::Balances(BalanceCall::transfer_keep_alive {
                 dest: MultiAddress::Id(account_id.clone()),
-                value: (*amt).saturated_into(),
+                value: amount.saturated_into(),
             }))
         })
         .collect();
