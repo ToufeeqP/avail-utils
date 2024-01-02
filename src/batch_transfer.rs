@@ -55,3 +55,37 @@ pub async fn batch_transfer(amount: u64) -> Result<()> {
 
     Ok(())
 }
+
+/// Transfer given amount from  above seed to all the accounts without batching  
+pub async fn individual_transfers(amount: u64) -> Result<()> {
+    // Read accounts from the file
+    let accounts_json = fs::read_to_string(ACCOUNT_PATH)?;
+    let accounts: Vec<Account> = serde_json::from_str(&accounts_json)?;
+
+    let args = Opts::from_args();
+    let client = build_client(args.ws, false).await?;
+
+    let extrinsic_params = AvailExtrinsicParams::new_with_app_id(0.into());
+    let pair_a = Pair::from_string_with_seed(ACCT_SEED, None)?;
+    let signer = PairSigner::<AvailConfig, Pair>::new(pair_a.0);
+
+    for account in accounts {
+        let account_id = AccountId32::from_str(&account.address)?;
+
+        let tx = api::tx().balances().transfer_keep_alive(
+            MultiAddress::Id(account_id.clone()),
+            amount.saturated_into(),
+        );
+        let h = client
+            .tx()
+            .sign_and_submit(&tx, &signer, extrinsic_params.clone())
+            .await?;
+
+        println!(
+            "Transfer completed for account {:?} with hash: {:?}",
+            account_id, h
+        );
+    }
+
+    Ok(())
+}
