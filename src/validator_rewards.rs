@@ -3,8 +3,17 @@ use anyhow::Result;
 use avail_subxt::{api, build_client, Opts};
 use codec::Encode;
 use prettytable::{row, Table};
+use serde::Serialize;
 use sp_arithmetic::Perbill;
 use structopt::StructOpt;
+use subxt::ext::sp_core::{crypto::Ss58Codec, sr25519::Public};
+
+pub const VALIDATOR_PATH: &str = "validators.json";
+
+#[derive(Serialize)]
+struct Address {
+    address: String,
+}
 
 pub async fn fetch_validator_rewards(
     start_era: u32,
@@ -79,5 +88,38 @@ pub async fn fetch_validator_rewards(
         // Print the table
         table.printstd();
     }
+    Ok(())
+}
+
+/// Fetches current validator_set fom chain & write them into required json format  
+pub async fn dump_validators() -> Result<(), Box<dyn std::error::Error>> {
+    let args = Opts::from_args();
+    let client = build_client(args.ws, args.validate_codegen).await?;
+
+    // Fetch validators directly as SS58-encoded addresses
+    let validators = client
+        .storage()
+        .at_latest()
+        .await?
+        .fetch(&api::storage().session().validators())
+        .await?
+        .unwrap_or_default()
+        .into_iter()
+        .map(|f| Public::from_raw(*f.as_ref()).to_ss58check().to_string())
+        .collect::<Vec<String>>();
+
+    // Serialize to JSON format
+    let json_data: Vec<Address> = validators
+        .into_iter()
+        .map(|address| Address { address })
+        .collect();
+
+    // Serialize to JSON format
+    let json_string = serde_json::to_string_pretty(&json_data)?;
+
+    // Write the JSON data to the file
+    std::fs::write(VALIDATOR_PATH, json_string)?;
+
+    println!("Validators written to file: {}", VALIDATOR_PATH);
     Ok(())
 }
