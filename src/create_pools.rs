@@ -24,7 +24,7 @@ pub async fn create_pools() -> Result<()> {
         "bottom drive obey lake curtain smoke basket hold race lonely fit walk//Ferdie",
     ];
     let args = Opts::from_args();
-    let client = build_client(args.ws, false).await?;
+    let (client, _) = build_client(args.ws, false).await?;
 
     let extrinsic_params = AvailExtrinsicParams::new_with_app_id(0.into());
     for seed in seeds {

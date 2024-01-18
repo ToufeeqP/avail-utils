@@ -27,7 +27,7 @@ pub async fn batch_transfer(amount: u64) -> Result<()> {
     let accounts: Vec<Account> = serde_json::from_str(&accounts_json)?;
 
     let args = Opts::from_args();
-    let client = build_client(args.ws, false).await?;
+    let (client, _) = build_client(args.ws, false).await?;
 
     let extrinsic_params = AvailExtrinsicParams::new_with_app_id(0.into());
     let pair_a = Pair::from_string_with_seed(ACCT_SEED, None)?;
@@ -63,7 +63,7 @@ pub async fn individual_transfers(amount: u64) -> Result<()> {
     let accounts: Vec<Account> = serde_json::from_str(&accounts_json)?;
 
     let args = Opts::from_args();
-    let client = build_client(args.ws, false).await?;
+    let (client, _) = build_client(args.ws, false).await?;
 
     let extrinsic_params = AvailExtrinsicParams::new_with_app_id(0.into());
     let pair_a = Pair::from_string_with_seed(ACCT_SEED, None)?;

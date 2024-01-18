@@ -20,7 +20,7 @@ pub async fn fetch_validator_rewards(
     end_era: u32,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let args = Opts::from_args();
-    let client = build_client(args.ws, args.validate_codegen).await?;
+    let (client, _) = build_client(args.ws, args.validate_codegen).await?;
 
     for era in start_era..=end_era {
         let era_points_query = api::storage().staking().eras_reward_points(era);
@@ -94,7 +94,7 @@ pub async fn fetch_validator_rewards(
 /// Fetches current validator_set fom chain & write them into required json format  
 pub async fn dump_validators() -> Result<(), Box<dyn std::error::Error>> {
     let args = Opts::from_args();
-    let client = build_client(args.ws, args.validate_codegen).await?;
+    let (client, _) = build_client(args.ws, args.validate_codegen).await?;
 
     // Fetch validators directly as SS58-encoded addresses
     let validators = client

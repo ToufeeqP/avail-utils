@@ -33,7 +33,7 @@ pub async fn bond_and_nominate_batch(amount: u64) -> Result<()> {
     let validators: Vec<Validator> = serde_json::from_str(&validators_json)?;
 
     let args = Opts::from_args();
-    let client = build_client(args.ws, false).await?;
+    let (client, _) = build_client(args.ws, false).await?;
 
     let extrinsic_params = AvailExtrinsicParams::new_with_app_id(0.into());
 
