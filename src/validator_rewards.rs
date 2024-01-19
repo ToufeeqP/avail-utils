@@ -6,13 +6,57 @@ use prettytable::{row, Table};
 use serde::Serialize;
 use sp_arithmetic::Perbill;
 use structopt::StructOpt;
-use subxt::ext::sp_core::{crypto::Ss58Codec, sr25519::Public};
+use subxt::{ext::sp_core::{crypto::Ss58Codec, sr25519::Public}, config::Header};
+use anyhow::Error; 
 
 pub const VALIDATOR_PATH: &str = "validators.json";
 
 #[derive(Serialize)]
 struct Address {
     address: String,
+}
+
+/// A utility to fetch last n blocks using RPC 
+pub async fn fetch_blocks(n: usize) -> Result<(), Error> {
+    let args = Opts::from_args();
+    let (client, _) = build_client(args.ws, args.validate_codegen).await?;
+    let latest_header = client
+        .rpc()
+        .header(None)
+        .await?
+        .expect("Best block always exists .qed");
+    let latest_block_number = latest_header.number();
+    
+    let mut tasks:  Vec<tokio::task::JoinHandle<Result<(), Error>>> = Vec::new();
+    for i in 0..n {
+        let block_number = latest_block_number - i as u32;
+        let client_clone = client.clone();
+        tasks.push(tokio::spawn(async move {
+            let result = async {
+                let block_hash = client_clone
+                    .rpc()
+                    .block_hash(Some(block_number.into()))
+                    .await?
+                    .ok_or_else(|| Error::msg("Failed to get block hash"))?;
+
+                let block_header = client_clone
+                    .rpc()
+                    .block(Some(block_hash))
+                    .await?
+                    .ok_or_else(|| Error::msg("Failed to get block header"))?;
+
+                println!("Block {}: {}", block_number, block_header.block.header.hash());
+                Ok(())
+            };
+
+            result.await
+        }));
+    }
+    // Wait for all tasks to complete
+    for task in tasks {
+        task.await??;
+    }
+    Ok(())
 }
 
 pub async fn fetch_validator_rewards(
