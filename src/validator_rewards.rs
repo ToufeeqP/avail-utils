@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use anyhow::Error;
 use anyhow::Result;
 use avail_subxt::{api, build_client, Opts};
 use codec::Encode;
@@ -6,8 +7,10 @@ use prettytable::{row, Table};
 use serde::Serialize;
 use sp_arithmetic::Perbill;
 use structopt::StructOpt;
-use subxt::{ext::sp_core::{crypto::Ss58Codec, sr25519::Public}, config::Header};
-use anyhow::Error; 
+use subxt::{
+    config::Header,
+    ext::sp_core::{crypto::Ss58Codec, sr25519::Public},
+};
 
 pub const VALIDATOR_PATH: &str = "validators.json";
 
@@ -16,7 +19,7 @@ struct Address {
     address: String,
 }
 
-/// A utility to fetch last n blocks using RPC 
+/// A utility to fetch last n blocks using RPC
 pub async fn fetch_blocks(n: usize) -> Result<(), Error> {
     let args = Opts::from_args();
     let (client, _) = build_client(args.ws, args.validate_codegen).await?;
@@ -26,8 +29,8 @@ pub async fn fetch_blocks(n: usize) -> Result<(), Error> {
         .await?
         .expect("Best block always exists .qed");
     let latest_block_number = latest_header.number();
-    
-    let mut tasks:  Vec<tokio::task::JoinHandle<Result<(), Error>>> = Vec::new();
+
+    let mut tasks: Vec<tokio::task::JoinHandle<Result<(), Error>>> = Vec::new();
     for i in 0..n {
         let block_number = latest_block_number - i as u32;
         let client_clone = client.clone();
@@ -45,7 +48,11 @@ pub async fn fetch_blocks(n: usize) -> Result<(), Error> {
                     .await?
                     .ok_or_else(|| Error::msg("Failed to get block header"))?;
 
-                println!("Block {}: {}", block_number, block_header.block.header.hash());
+                println!(
+                    "Block {}: {}",
+                    block_number,
+                    block_header.block.header.hash()
+                );
                 Ok(())
             };
 
