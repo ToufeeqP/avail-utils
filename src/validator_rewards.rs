@@ -113,12 +113,13 @@ pub async fn fetch_validator_rewards(
 
         for (validator_account_id, reward_points) in era_validators {
             let id_query = api::storage().identity().identity_of(&validator_account_id);
-            let id = client.storage().at_latest().await?.fetch(&id_query).await?;
-
-            let id_bytes = match id {
-                Some(id) => id.info.display.encode()[1..].to_vec(),
-                None => vec![],
-            };
+            let _id = client.storage().at_latest().await?.fetch(&id_query).await?;
+            // TODO: Temp comment, fix later
+            // let id_bytes = match id {
+            //     Some(id) => id.info.display.encode()[1..].to_vec(),
+            //     None => vec![],
+            // };
+            let id_bytes = vec![];
             let validator_id = String::from_utf8(id_bytes).unwrap_or_default();
             // Calculate rewards percent
             let rewards_percent = Perbill::from_rational(reward_points, era_total_points);
