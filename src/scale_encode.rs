@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use codec::{Decode, Encode, MaxEncodedLen};
 use frame_support::BoundedVec;
 use sp_runtime::traits::ConstU32;

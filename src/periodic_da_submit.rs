@@ -37,5 +37,4 @@ pub async fn submit_txs() -> anyhow::Result<()> {
         tokio::time::sleep(Duration::from_secs(DELAY_SECS)).await;
     }
 
-    Ok(())
 }
