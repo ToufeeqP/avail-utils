@@ -13,8 +13,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // batch_transfer::batch_transfer(10_000_000_000_000_000_000u64).await?;
     // staking_utils::bond_and_nominate_batch(9_000_000_000_000_000_000u64).await?;
     let execution_start = std::time::Instant::now();
-    validator_rewards::fetch_blocks(256).await?;
-    // periodic_da_submit::submit_txs().await?;
+    // validator_rewards::fetch_blocks(256).await?;
+    periodic_da_submit::submit_txs().await?;
     println!("Time elapsed: {:?}", execution_start.elapsed());
     Ok(())
 }
