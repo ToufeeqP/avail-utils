@@ -2,7 +2,7 @@
 use anyhow::Error;
 use anyhow::Result;
 use avail_subxt::{api, build_client, Opts};
-use codec::Encode;
+// use codec::Encode;
 use prettytable::{row, Table};
 use serde::Serialize;
 use sp_arithmetic::Perbill;
