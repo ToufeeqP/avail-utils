@@ -1,18 +1,15 @@
 #![allow(dead_code)]
 use anyhow::Result;
 use avail_subxt::{
-    api, build_client,
-    primitives::AvailExtrinsicParams,
+    api::{self},
+    primitives::new_params_from_app_id,
     utils::{AccountId32, MultiAddress},
-    AvailConfig, Opts,
+    AvailClient, Opts,
 };
 use sp_arithmetic::traits::SaturatedConversion;
 use std::str::FromStr;
 use structopt::StructOpt;
-use subxt::{
-    ext::sp_core::{sr25519::Pair, Pair as _},
-    tx::PairSigner,
-};
+use subxt_signer::{bip39::Mnemonic, sr25519::Keypair};
 
 pub async fn create_pools() -> Result<()> {
     let seeds = vec![
@@ -24,12 +21,12 @@ pub async fn create_pools() -> Result<()> {
         "bottom drive obey lake curtain smoke basket hold race lonely fit walk//Ferdie",
     ];
     let args = Opts::from_args();
-    let (client, _) = build_client(args.ws, false).await?;
+    let client = AvailClient::new(args.ws).await?;
 
-    let extrinsic_params = AvailExtrinsicParams::new_with_app_id(0.into());
     for seed in seeds {
-        let pair_a = Pair::from_string_with_seed(seed, None)?;
-        let signer = PairSigner::<AvailConfig, Pair>::new(pair_a.0);
+        let extrinsic_params = new_params_from_app_id(0);
+        let mnemonic = Mnemonic::parse(seed)?;
+        let signer = Keypair::from_phrase(&mnemonic, None)?;
         let account_id = AccountId32::from_str("5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc")?;
         let multi_address = MultiAddress::Id(account_id);
         let tx = api::tx().nomination_pools().create(
@@ -40,7 +37,7 @@ pub async fn create_pools() -> Result<()> {
         );
         let h = client
             .tx()
-            .sign_and_submit(&tx, &signer, extrinsic_params.clone())
+            .sign_and_submit(&tx, &signer, extrinsic_params)
             .await?;
 
         println!("Pool creation completed with hash: {:?}", h);
