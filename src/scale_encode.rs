@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 use codec::{Decode, Encode, MaxEncodedLen};
 use frame_support::BoundedVec;
+use sp_core::{crypto::Ss58Codec, ed25519::Public};
 use sp_runtime::traits::ConstU32;
-use subxt::ext::sp_core::{crypto::Ss58Codec, ed25519::Public};
 
 pub type BoundedAuthorityList = BoundedVec<(Public, u64), ConstU32<100_000>>;
 

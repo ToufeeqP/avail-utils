@@ -1,9 +1,14 @@
 #![allow(dead_code)]
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
-use std::io::{self};
-use subxt::ext::sp_core::{crypto::Ss58Codec, sr25519, Pair as _};
+use sp_core::{
+    crypto::{Pair as _, Ss58Codec},
+    sr25519::Pair as SpPair,
+};
+use std::{
+    fs::File,
+    io::{self},
+};
 
 pub const ACCOUNT_PATH: &str = "accounts.json";
 
@@ -18,7 +23,7 @@ pub fn generate_accounts(n: u32) -> Result<(), Box<dyn std::error::Error>> {
 
     // Generate and store accounts
     for _ in 0..n {
-        let (private, mnemonic, _) = sr25519::Pair::generate_with_phrase(None);
+        let (private, mnemonic, _) = SpPair::generate_with_phrase(None);
         let address = private.public().to_ss58check();
 
         // Store account information in the vector

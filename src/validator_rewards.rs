@@ -1,16 +1,11 @@
 #![allow(dead_code)]
-use anyhow::Error;
-use anyhow::Result;
-use avail_subxt::{api, build_client, Opts};
-// use codec::Encode;
+use anyhow::{Error, Result};
+use avail_subxt::{api, AvailClient, Opts};
 use prettytable::{row, Table};
 use serde::Serialize;
 use sp_arithmetic::Perbill;
+use sp_core::{crypto::Ss58Codec, sr25519::Public, Encode};
 use structopt::StructOpt;
-use subxt::{
-    config::Header,
-    ext::sp_core::{crypto::Ss58Codec, sr25519::Public},
-};
 
 pub const VALIDATOR_PATH: &str = "validators.json";
 
@@ -22,37 +17,34 @@ struct Address {
 /// A utility to fetch last n blocks using RPC
 pub async fn fetch_blocks(n: usize) -> Result<(), Error> {
     let args = Opts::from_args();
-    let (client, _) = build_client(args.ws, args.validate_codegen).await?;
+    let client = AvailClient::new(args.ws).await?;
+
     let latest_header = client
-        .rpc()
-        .header(None)
+        .legacy_rpc()
+        .chain_get_header(None)
         .await?
-        .expect("Best block always exists .qed");
-    let latest_block_number = latest_header.number();
+        .expect("header exist");
+    let latest_block_number = latest_header.number;
 
     let mut tasks: Vec<tokio::task::JoinHandle<Result<(), Error>>> = Vec::new();
     for i in 0..n {
         let block_number = latest_block_number - i as u32;
-        let client_clone = client.clone();
+        // let client_clone = client.clone();
+        let leg_rpc = client.legacy_rpc();
+
         tasks.push(tokio::spawn(async move {
             let result = async {
-                let block_hash = client_clone
-                    .rpc()
-                    .block_hash(Some(block_number.into()))
+                let block_hash = leg_rpc
+                    .chain_get_block_hash(Some(block_number.into()))
                     .await?
                     .ok_or_else(|| Error::msg("Failed to get block hash"))?;
 
-                let block_header = client_clone
-                    .rpc()
-                    .block(Some(block_hash))
+                let _block = leg_rpc
+                    .chain_get_block(Some(block_hash))
                     .await?
                     .ok_or_else(|| Error::msg("Failed to get block header"))?;
 
-                println!(
-                    "Block {}: {}",
-                    block_number,
-                    block_header.block.header.hash()
-                );
+                println!("Block {}: {}", block_number, block_hash);
                 Ok(())
             };
 
@@ -71,7 +63,7 @@ pub async fn fetch_validator_rewards(
     end_era: u32,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let args = Opts::from_args();
-    let (client, _) = build_client(args.ws, args.validate_codegen).await?;
+    let client = AvailClient::new(args.ws).await?;
 
     for era in start_era..=end_era {
         let era_points_query = api::storage().staking().eras_reward_points(era);
@@ -113,13 +105,13 @@ pub async fn fetch_validator_rewards(
 
         for (validator_account_id, reward_points) in era_validators {
             let id_query = api::storage().identity().identity_of(&validator_account_id);
-            let _id = client.storage().at_latest().await?.fetch(&id_query).await?;
+            let id = client.storage().at_latest().await?.fetch(&id_query).await?;
             // TODO: Temp comment, fix later
-            // let id_bytes = match id {
-            //     Some(id) => id.info.display.encode()[1..].to_vec(),
-            //     None => vec![],
-            // };
-            let id_bytes = vec![];
+            let id_bytes = match id {
+                Some(id) => id.0.info.display.encode()[1..].to_vec(),
+                None => vec![],
+            };
+            // let id_bytes = vec![];
             let validator_id = String::from_utf8(id_bytes).unwrap_or_default();
             // Calculate rewards percent
             let rewards_percent = Perbill::from_rational(reward_points, era_total_points);
@@ -146,7 +138,7 @@ pub async fn fetch_validator_rewards(
 /// Fetches current validator_set fom chain & write them into required json format  
 pub async fn dump_validators() -> Result<(), Box<dyn std::error::Error>> {
     let args = Opts::from_args();
-    let (client, _) = build_client(args.ws, args.validate_codegen).await?;
+    let client = AvailClient::new(args.ws).await?;
 
     // Fetch validators directly as SS58-encoded addresses
     let validators = client
