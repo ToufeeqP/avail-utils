@@ -16,7 +16,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // validator_rewards::fetch_blocks(10).await?;
     // validator_rewards::fetch_validator_rewards(1, 3).await?;
     // validator_rewards::dump_validators().await?;
-    println!("vote_weight: {}", validator_rewards::to_vote_weight(100_000_000_000_000_000_000_000u128).await?);
+    println!(
+        "vote_weight: {}",
+        validator_rewards::to_vote_weight(100_000_000_000_000_000_000_000u128).await?
+    );
+    println!(
+        "vote_to_currency: {}",
+        validator_rewards::to_balance(183904829544958u64).await?
+    );
     // periodic_da_submit::submit_txs().await?;
     // scale_encode::encode();
     println!("Time elapsed: {:?}", execution_start.elapsed());

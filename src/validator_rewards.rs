@@ -177,6 +177,10 @@ fn to_vote(value: u128, issuance: u128) -> u64 {
     (value / factor(issuance)).saturated_into()
 }
 
+fn to_currency(vote_weight: u128, issuance: u128) -> u128 {
+    vote_weight.saturating_mul(factor(issuance))
+}
+
 pub async fn to_vote_weight(value: u128) -> Result<u64, Box<dyn std::error::Error>> {
     let args = Opts::from_args();
     let client = AvailClient::new(args.ws).await?;
@@ -190,4 +194,19 @@ pub async fn to_vote_weight(value: u128) -> Result<u64, Box<dyn std::error::Erro
         .await?
         .unwrap();
     Ok(to_vote(value, issuance))
+}
+
+pub async fn to_balance(vote_weight: u64) -> Result<u128, Box<dyn std::error::Error>> {
+    let args = Opts::from_args();
+    let client = AvailClient::new(args.ws).await?;
+    let issuance_query = api::storage().balances().total_issuance();
+
+    let issuance = client
+        .storage()
+        .at_latest()
+        .await?
+        .fetch(&issuance_query)
+        .await?
+        .unwrap();
+    Ok(to_currency(vote_weight.into(), issuance))
 }
