@@ -5,6 +5,7 @@ use prettytable::{row, Table};
 use serde::Serialize;
 use sp_arithmetic::Perbill;
 use sp_core::{crypto::Ss58Codec, sr25519::Public, Encode};
+use sp_runtime::SaturatedConversion;
 use structopt::StructOpt;
 
 pub const VALIDATOR_PATH: &str = "validators.json";
@@ -166,4 +167,27 @@ pub async fn dump_validators() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Validators written to file: {}", VALIDATOR_PATH);
     Ok(())
+}
+
+fn factor(issuance: u128) -> u128 {
+    (issuance / u64::MAX as u128).max(1)
+}
+
+fn to_vote(value: u128, issuance: u128) -> u64 {
+    (value / factor(issuance)).saturated_into()
+}
+
+pub async fn to_vote_weight(value: u128) -> Result<u64, Box<dyn std::error::Error>> {
+    let args = Opts::from_args();
+    let client = AvailClient::new(args.ws).await?;
+    let issuance_query = api::storage().balances().total_issuance();
+
+    let issuance = client
+        .storage()
+        .at_latest()
+        .await?
+        .fetch(&issuance_query)
+        .await?
+        .unwrap();
+    Ok(to_vote(value, issuance))
 }
