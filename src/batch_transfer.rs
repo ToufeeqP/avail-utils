@@ -94,9 +94,9 @@ pub async fn batch_transfer_from_csv(
         let address_str = &record[0];
         let amount_str = &record[1];
 
-        let amount: u128 = amount_str.parse().or_else(|_| {
+        let amount: u128 = amount_str.parse().map_err(|_| {
             println!("Error parsing amount for record {}. Skipping.", index + 1);
-            Err(anyhow!("Invalid amount in record {}.", index + 1))
+            anyhow!("Invalid amount in record {}.", index + 1)
         })?;
 
         let amount_in_avail = amount.checked_mul(AVAIL).ok_or(anyhow!(
@@ -104,12 +104,12 @@ pub async fn batch_transfer_from_csv(
             index + 1
         ))?;
 
-        let account_id = AccountId32::from_str(address_str).or_else(|_| {
+        let account_id = AccountId32::from_str(address_str).map_err(|_| {
             println!(
                 "Error parsing account ID for record {}. Skipping.",
                 index + 1
             );
-            Err(anyhow!("Invalid address in record {}", index + 1))
+            anyhow!("Invalid address in record {}", index + 1)
         })?;
 
         transfers.push((account_id, amount_in_avail));
@@ -124,12 +124,11 @@ pub async fn batch_transfer_from_csv(
     let signer_id = signer.public_key().into();
     let mut nonce = client.tx().account_nonce(&signer_id).await?;
 
-    let mut batch_counter = 0;
     let mut successful_txs = vec![];
     let mut failed_txs = vec![];
 
     // Split transfers into batches of the specified size
-    for chunk in transfers.chunks(max_calls_per_batch) {
+    for (batch_counter, chunk) in transfers.chunks(max_calls_per_batch).enumerate() {
         let calls: Vec<Call> = chunk
             .iter()
             .map(|(account_id, amount)| {
@@ -177,8 +176,6 @@ pub async fn batch_transfer_from_csv(
                 }
             }
         }
-
-        batch_counter += 1;
         nonce += 1;
     }
 

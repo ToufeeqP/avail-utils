@@ -2,7 +2,6 @@ use anyhow::Result;
 pub mod account_utils;
 pub mod batch_transfer;
 mod create_pools;
-mod csv_accounts;
 mod periodic_da_submit;
 mod scale_encode;
 mod staking_utils;
