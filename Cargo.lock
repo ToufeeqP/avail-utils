@@ -688,6 +688,7 @@ version = "0.2.0"
 dependencies = [
  "anyhow",
  "avail-subxt",
+ "csv",
  "frame-support 28.0.0 (git+https://github.com/availproject/polkadot-sdk.git?tag=polkadot-1.7.1-patch)",
  "hex",
  "parity-scale-codec",

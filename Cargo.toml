@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.75"
+csv = "1.1"
 subxt = { version = "0.34" }
 subxt-signer = "0.34"
 avail-subxt = { git = "https://github.com/availproject/avail", branch = "main", version = "0.5.0" }
