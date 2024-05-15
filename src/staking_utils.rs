@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 use crate::account_utils::{Account, ACCOUNT_PATH};
+use avail_core::AppId;
 use anyhow::Result;
 use avail_subxt::{
     api::{self, runtime_types::pallet_staking::pallet::pallet::Call as StakingCall, Call},
@@ -31,7 +32,7 @@ pub async fn bond_and_nominate_batch(amount: u128) -> Result<()> {
     let client = AvailClient::new(args.ws).await?;
 
     for (account, validator) in accounts.iter().zip(validators.iter()) {
-        let extrinsic_params = new_params_from_app_id(0);
+        let extrinsic_params = new_params_from_app_id(AppId(0));
 
         let mnemonic = Mnemonic::parse(&account.mnemonic)?;
         let signer = Keypair::from_phrase(&mnemonic, None)?;

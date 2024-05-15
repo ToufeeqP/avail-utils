@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 use anyhow::Result;
+use avail_core::AppId;
 use avail_subxt::{
     api::{self},
     primitives::new_params_from_app_id,
@@ -24,7 +25,7 @@ pub async fn create_pools() -> Result<()> {
     let client = AvailClient::new(args.ws).await?;
 
     for seed in seeds {
-        let extrinsic_params = new_params_from_app_id(0);
+        let extrinsic_params = new_params_from_app_id(AppId(0));
         let mnemonic = Mnemonic::parse(seed)?;
         let signer = Keypair::from_phrase(&mnemonic, None)?;
         let account_id = AccountId32::from_str("5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc")?;

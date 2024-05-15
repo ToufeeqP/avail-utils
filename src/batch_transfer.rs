@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 use crate::account_utils::{Account, ACCOUNT_PATH};
 use anyhow::{anyhow, Result};
+use avail_core::AppId;
 use avail_subxt::{
     api::{
         runtime_types::pallet_balances::pallet::Call as BalanceCall,
@@ -57,7 +58,7 @@ pub async fn batch_transfer(amount: u128) -> Result<()> {
     let calls = calls?;
 
     let batch_tx = api::tx().utility().batch(calls);
-    let h = tx::send_then_in_block(&client, &batch_tx, &signer, 0)
+    let h = tx::send_then_in_block(&client, &batch_tx, &signer, AppId(0))
         .await?
         .block_hash();
     println!("Batch transfer completed with hash: {:?}", h);
@@ -142,7 +143,7 @@ pub async fn batch_transfer_from_csv(
         // Attempt to send the batch with retry logic
         for attempt in 0..=retry_attempts {
             let batch_tx = api::tx().utility().batch_all(calls.clone());
-            let tx_result = tx::send_with_nonce(&client, &batch_tx, &signer, 0, nonce).await;
+            let tx_result = tx::send_with_nonce(&client, &batch_tx, &signer, AppId(0), nonce).await;
 
             match tx_result {
                 Ok(result) => {
@@ -212,7 +213,7 @@ pub async fn individual_transfers(amount: u64) -> Result<()> {
         let account_id = AccountId32::from_str(&account.address)?;
 
         // TODO: implement clone on ExtrinsicParams in avail-subxt and use it outside loop
-        let extrinsic_params = new_params_from_app_id(0);
+        let extrinsic_params = new_params_from_app_id(AppId(0));
         let tx = api::tx().balances().transfer_keep_alive(
             MultiAddress::Id(account_id.clone()),
             amount.saturated_into(),
