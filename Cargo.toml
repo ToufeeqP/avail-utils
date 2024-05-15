@@ -7,30 +7,30 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.75"
-avail-core = { git = "https://github.com/availproject/avail-core", tag = "node-v2210-rc1", features = [ "runtime"] }
+avail-core = { git = "https://github.com/availproject/avail-core", tag = "node-v2220-rc1", features = [ "runtime"] }
 csv = "1.1"
-sc-state-db = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3" }
-sc-client-db = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3"}
-sc-client-api = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3" }
+sc-state-db = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
+sc-client-db = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5"}
+sc-client-api = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
 subxt = { version = "0.34" }
 subxt-signer = "0.34"
-avail-subxt = { git = "https://github.com/availproject/avail", branch = "main", version = "0.5.0" }
+avail-subxt = { git = "https://github.com/availproject/avail", tag = "v2.2.2.0-rc1" }
 codec = { package = "parity-scale-codec", version = "3.6.1" }
 prettytable = "0.10.0"
-sp-arithmetic = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3", version = "23.0.0" }
-sp-core = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3" }
+sp-arithmetic = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5", version = "23.0.0" }
+sp-core = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
 structopt = "0.3.26"
 tokio = "1.34.0"
 serde = "1.0.197"
 serde_json = "1.0.108"
-frame-support = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3" }
-sp-runtime = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3" }
+frame-support = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
+sp-runtime = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
 hex = "0.4.3"
 hex-literal = "0.3.4"
 
 # Dependency `subxt` uses it's own 'version' of sp-core so we need to patch it :)
 [patch.crates-io]
 
-sp-io = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3" }
-sp-runtime = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3" }
-sp-std = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-3" }
+sp-io = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
+sp-runtime = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
+sp-std = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
