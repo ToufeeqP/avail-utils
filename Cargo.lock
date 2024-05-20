@@ -764,6 +764,7 @@ dependencies = [
  "sp-arithmetic",
  "sp-core",
  "sp-runtime",
+ "sp-storage 19.0.0 (git+https://github.com/availproject/polkadot-sdk.git?tag=polkadot-1.7.1-patch-5)",
  "structopt",
  "subxt",
  "subxt-signer",

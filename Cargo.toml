@@ -25,8 +25,11 @@ serde = "1.0.197"
 serde_json = "1.0.108"
 frame-support = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
 sp-runtime = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
+
 hex = "0.4.3"
 hex-literal = "0.3.4"
+# decodeing_era_points
+sp-storage = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
 
 # Dependency `subxt` uses it's own 'version' of sp-core so we need to patch it :)
 [patch.crates-io]

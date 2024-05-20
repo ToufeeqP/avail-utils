@@ -7,11 +7,13 @@ mod periodic_da_submit;
 mod scale_encode;
 mod staking_utils;
 mod validator_rewards;
+mod decode_era_points;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // account_utils::generate_accounts(10)?;
     let execution_start = std::time::Instant::now();
+    decode_era_points::main();
     // db_utils::run();
     // csv_accounts::generate_accounts(7500)?;
     // batch_transfer::batch_transfer(10_000u128).await?;
