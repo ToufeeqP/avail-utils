@@ -762,6 +762,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sp-arithmetic",
+ "sp-consensus-grandpa",
  "sp-core",
  "sp-runtime",
  "structopt",
@@ -2040,6 +2041,22 @@ checksum = "84f2e425d9790201ba4af4630191feac6dcc98765b118d4d18e91d23c2353866"
 dependencies = [
  "env_logger",
  "log",
+]
+
+[[package]]
+name = "finality-grandpa"
+version = "0.16.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "36530797b9bf31cd4ff126dcfee8170f86b00cfdcea3269d73133cc0415945c3"
+dependencies = [
+ "either",
+ "futures",
+ "futures-timer",
+ "log",
+ "num-traits",
+ "parity-scale-codec",
+ "parking_lot",
+ "scale-info",
 ]
 
 [[package]]
@@ -5229,6 +5246,24 @@ dependencies = [
  "sp-runtime",
  "sp-state-machine",
  "thiserror",
+]
+
+[[package]]
+name = "sp-consensus-grandpa"
+version = "13.0.0"
+source = "git+https://github.com/availproject/polkadot-sdk.git?tag=polkadot-1.7.1-patch-5#b8f49aa59c9c49ec7e67272f9c3d1065b3e2ec3a"
+dependencies = [
+ "finality-grandpa",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-api",
+ "sp-application-crypto",
+ "sp-core",
+ "sp-keystore",
+ "sp-runtime",
+ "sp-std 14.0.0 (git+https://github.com/availproject/polkadot-sdk.git?tag=polkadot-1.7.1-patch-5)",
 ]
 
 [[package]]

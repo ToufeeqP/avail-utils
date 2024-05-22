@@ -14,6 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // account_utils::generate_accounts(10)?;
     let execution_start = std::time::Instant::now();
     block_author::find_author(Some(block_author::BlockId::Number(8497))).await?;
+    // scale_encode::decode_justification();
     // db_utils::run();
     // csv_accounts::generate_accounts(7500)?;
     // batch_transfer::batch_transfer(10_000u128).await?;
