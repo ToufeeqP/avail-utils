@@ -3,6 +3,7 @@ pub mod account_utils;
 pub mod batch_transfer;
 mod create_pools;
 // mod db_utils;
+mod block_author;
 mod periodic_da_submit;
 mod scale_encode;
 mod staking_utils;
@@ -12,6 +13,7 @@ mod validator_rewards;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // account_utils::generate_accounts(10)?;
     let execution_start = std::time::Instant::now();
+    block_author::find_author(Some(block_author::BlockId::Number(8497))).await?;
     // db_utils::run();
     // csv_accounts::generate_accounts(7500)?;
     // batch_transfer::batch_transfer(10_000u128).await?;
