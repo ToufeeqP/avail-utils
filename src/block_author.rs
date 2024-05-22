@@ -62,10 +62,10 @@ pub async fn find_author(block_id: Option<BlockId>) -> Result<()> {
                 let validator = validators.get(auth_index as usize);
                 match validator {
                     Some(validator) => println!(
-                            "author of block #{} is {}",
-                            header.number,
-                            validator.to_string()
-                        ),
+                        "author of block #{} is {}",
+                        header.number,
+                        validator.to_string()
+                    ),
                     None => println!("No author for block #{}", header.number,),
                 }
             }

@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use crate::account_utils::{Account, ACCOUNT_PATH};
-use avail_core::AppId;
 use anyhow::Result;
+use avail_core::AppId;
 use avail_subxt::{
     api::{self, runtime_types::pallet_staking::pallet::pallet::Call as StakingCall, Call},
     primitives::new_params_from_app_id,
