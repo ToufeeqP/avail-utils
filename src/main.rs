@@ -15,8 +15,8 @@ mod validator_rewards;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // account_utils::generate_accounts(10)?;
     let execution_start = std::time::Instant::now();
-    // check_block_authors().await?;
-    block_author::verify_seal(Some(block_author::BlockId::Number(8497))).await?;
+    check_block_authors().await?;
+    // block_author::verify_seal_and_session(Some(block_author::BlockId::Number(67065))).await?;
     // block_author::find_author(Some(block_author::BlockId::Number(8497))).await?;
     // scale_encode::decode_justification();
     // db_utils::run();
@@ -124,8 +124,14 @@ async fn check_block_authors() -> Result<()> {
       }
       "#;
     let block_ids = BlockIds::from_json(blocks.as_bytes()).unwrap();
+    // Print the table header if this is the first block processed
+    println!(
+        "{:<8} | {:<50} | {:<50} | {:<6} | {:<6}",
+        "Block #", "BABE Author", "Session Author", "Match", "Seal"
+    );
+    println!("{}", "-".repeat(132));
     for node in block_ids.nodes {
-        block_author::find_author(Some(block_author::BlockId::Number(node))).await?;
+        block_author::verify_seal_and_session(Some(block_author::BlockId::Number(node))).await?;
     }
     Ok(())
 }
