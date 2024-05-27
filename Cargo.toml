@@ -30,6 +30,9 @@ hex-literal = "0.3.4"
 
 # deps for decoding grandpa justifications
 sp-consensus-grandpa = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
+# deps for verifying seal
+sp-consensus-babe = { git = "https://github.com/availproject/polkadot-sdk.git", tag = "polkadot-1.7.1-patch-5" }
+
 # Dependency `subxt` uses it's own 'version' of sp-core so we need to patch it :)
 [patch.crates-io]
 
