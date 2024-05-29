@@ -238,7 +238,7 @@ pub async fn verify_seal_and_session(block_id: Option<BlockId>) -> Result<()> {
     let local_header = HeaderT::decode(&mut header.encode().as_ref()).unwrap();
 
     if let Some(signer_key) = signing_auth {
-        if let Some(_) = verify_seal_signature(local_header, &signer_key) {
+        if verify_seal_signature(local_header, &signer_key).is_some() {
             seal_verification_result = "✅".to_string();
         } else {
             seal_verification_result = "❌".to_string();

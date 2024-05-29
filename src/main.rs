@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 pub mod account_utils;
 pub mod batch_transfer;
 mod create_pools;
+mod polkadot_utils;
 // mod db_utils;
 mod block_author;
 mod periodic_da_submit;
@@ -16,6 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // account_utils::generate_accounts(10)?;
     let execution_start = std::time::Instant::now();
     check_block_authors().await?;
+    // polkadot_utils::verify_seal_and_session(Some(block_author::BlockId::Number(1276352))).await?;
     // block_author::verify_seal_and_session(Some(block_author::BlockId::Number(67065))).await?;
     // block_author::find_author(Some(block_author::BlockId::Number(8497))).await?;
     // scale_encode::decode_justification();
