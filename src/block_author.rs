@@ -8,6 +8,7 @@ use avail_subxt::{
     },
     AvailClient, Opts,
 };
+use avail_subxt::api::runtime_types::sp_consensus_slots::Slot;
 use codec::{Decode, Encode};
 use hex_literal::hex;
 use sp_consensus_babe::AuthorityId;
@@ -88,6 +89,15 @@ fn authority_index(digest: PreDigest) -> u32 {
     }
 }
 
+/// Returns the slot of the pre digest.
+fn slot(digest: PreDigest) -> Slot {
+    match digest {
+        PreDigest::Primary(primary) => primary.slot,
+        PreDigest::SecondaryPlain(secondary) => secondary.slot,
+        PreDigest::SecondaryVRF(secondary) => secondary.slot,
+    }
+}
+
 pub async fn verify_seal(block_id: Option<BlockId>) -> Result<()> {
     use sp_consensus_babe::digests::*;
     use sp_runtime::RuntimeAppPublic;
@@ -165,6 +175,7 @@ pub async fn verify_seal_and_session(block_id: Option<BlockId>) -> Result<()> {
     let mut session_author = "No session author".to_string();
     let mut seal_verification_result = "❌".to_string();
     let mut authors_match = "❌";
+    let mut babe_slot: Slot = Slot(0);
 
     // get PreDigest
     let digests = header.digest.logs.clone();
@@ -175,7 +186,7 @@ pub async fn verify_seal_and_session(block_id: Option<BlockId>) -> Result<()> {
         if id == &BABE_ENGINE_ID {
             let pre_digest: AvailPreDigest =
                 AvailPreDigest::decode(&mut data.as_ref()).expect("Lets see");
-            let auth_index = authority_index(pre_digest);
+            let auth_index = authority_index(pre_digest.clone());
             // fetch the session validators list
             let vals_query = api::storage().session().validators();
             let validators = client
@@ -214,7 +225,7 @@ pub async fn verify_seal_and_session(block_id: Option<BlockId>) -> Result<()> {
                             .expect("Should be able recover public key from bytes"),
                     );
                     babe_author = validator_stash.to_string();
-
+                    babe_slot = slot(pre_digest);
                     // Check if session and BABE authors match
                     if babe_author == session_author {
                         authors_match = "✅";
@@ -247,8 +258,8 @@ pub async fn verify_seal_and_session(block_id: Option<BlockId>) -> Result<()> {
 
     // Print the table row
     println!(
-        "{:<8} | {:<50} | {:<50} | {:<6} | {:<6}",
-        block_number, babe_author, session_author, authors_match, seal_verification_result
+        "{:<8} | {:<10} | {:<50} | {:<50} | {:<6} | {:<6}",
+        block_number, babe_slot.0, babe_author, session_author, authors_match, seal_verification_result
     );
 
     Ok(())

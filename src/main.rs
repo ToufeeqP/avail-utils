@@ -18,7 +18,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let execution_start = std::time::Instant::now();
     check_block_authors().await?;
     // polkadot_utils::verify_seal_and_session(Some(block_author::BlockId::Number(1276352))).await?;
-    // block_author::verify_seal_and_session(Some(block_author::BlockId::Number(67065))).await?;
+    // block_author::verify_seal_and_session(Some(block_author::BlockId::Number(201))).await?;
     // block_author::find_author(Some(block_author::BlockId::Number(8497))).await?;
     // scale_encode::decode_justification();
     // db_utils::run();
@@ -118,21 +118,22 @@ async fn check_block_authors() -> Result<()> {
     // }"#;
 
     // hex
-    let blocks = r#"{
-        "nodes": [
-          90691, 8641, 86373, 82057, 77739, 73421, 69102, 64787, 60469, 56150, 51830,
-          47511, 4321, 43194, 38876, 34558, 30239, 25919, 21601, 17281, 12961
-        ]
-      }
-      "#;
-    let block_ids = BlockIds::from_json(blocks.as_bytes()).unwrap();
+    // let blocks = r#"{
+    //     "nodes": [
+    //       90691, 8641, 86373, 82057, 77739, 73421, 69102, 64787, 60469, 56150, 51830,
+    //       47511, 4321, 43194, 38876, 34558, 30239, 25919, 21601, 17281, 12961
+    //     ]
+    //   }
+    //   "#;
+    // let block_ids = BlockIds::from_json(blocks.as_bytes()).unwrap();
     // Print the table header if this is the first block processed
     println!(
-        "{:<8} | {:<50} | {:<50} | {:<6} | {:<6}",
-        "Block #", "BABE Author", "Session Author", "Match", "Seal"
+        "{:<8} | {:<10} | {:<50} | {:<50} | {:<6} | {:<6}",
+        "Block #", "Slot #", "BABE Author", "Session Author", "Match", "Seal"
     );
-    println!("{}", "-".repeat(132));
-    for node in block_ids.nodes {
+    println!("{}", "-".repeat(142));
+    // for node in block_ids.nodes {
+    for node in [50, 51, 100, 101, 150, 151] {
         block_author::verify_seal_and_session(Some(block_author::BlockId::Number(node))).await?;
     }
     Ok(())
