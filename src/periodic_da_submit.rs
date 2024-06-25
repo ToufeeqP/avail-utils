@@ -1,6 +1,6 @@
 #![allow(dead_code)]
-use avail_subxt::{submit::submit_data_with_nonce, AvailClient, Opts};
 use avail_core::AppId;
+use avail_subxt::{submit::submit_data_with_nonce, AvailClient, Opts};
 use sp_arithmetic::traits::One;
 use structopt::StructOpt;
 use subxt_signer::sr25519::dev;
