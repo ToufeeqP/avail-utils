@@ -16,7 +16,8 @@ mod validator_rewards;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // account_utils::generate_accounts(10)?;
     let execution_start = std::time::Instant::now();
-    check_block_authors().await?;
+    block_author::get_block_exts(Some(block_author::BlockId::Number(408075))).await?;
+    // check_block_authors().await?;
     // polkadot_utils::verify_seal_and_session(Some(block_author::BlockId::Number(1276352))).await?;
     // block_author::verify_seal_and_session(Some(block_author::BlockId::Number(201))).await?;
     // block_author::find_author(Some(block_author::BlockId::Number(8497))).await?;

@@ -5,8 +5,7 @@ use avail_subxt::{
     api::{
         self,
         runtime_types::{sp_consensus_babe::digests::PreDigest, sp_core::crypto::KeyTypeId},
-    },
-    AvailClient, Opts,
+    }, AvailClient, Opts
 };
 use avail_subxt::api::runtime_types::sp_consensus_slots::Slot;
 use codec::{Decode, Encode};
@@ -16,6 +15,7 @@ use sp_core::{ByteArray, H256};
 use sp_runtime::{traits::Header, RuntimeDebug};
 use structopt::StructOpt;
 use subxt::config::substrate::DigestItem;
+use sp_io::hashing::blake2_256;
 
 pub type BlockNumber = u32;
 pub type HeaderT = DaHeader<BlockNumber, sp_runtime::traits::BlakeTwo256>;
@@ -262,5 +262,52 @@ pub async fn verify_seal_and_session(block_id: Option<BlockId>) -> Result<()> {
         block_number, babe_slot.0, babe_author, session_author, authors_match, seal_verification_result
     );
 
+    Ok(())
+}
+
+pub type DaData = Vec<u8>;
+
+pub async fn get_block_exts(block_id: Option<BlockId>) -> Result<()> {
+    let args = Opts::from_args();
+    let client = AvailClient::new(args.ws).await?;
+
+    
+    let block = match block_id {
+        None => client.blocks().at_latest().await?,
+        Some(id) => match id {
+            BlockId::Hash(block_hash) => client.blocks().at(block_hash).await?,
+            BlockId::Number(block_number) => {
+                let block_hash = client
+                    .legacy_rpc()
+                    .chain_get_block_hash(Some(block_number.into()))
+                    .await?
+                    .expect("header exist");
+                client.blocks().at(block_hash).await?
+            }
+        },
+    };
+
+    let extrinsics = block.extrinsics().await.expect("Every block will have ext; qed");
+    println!("List of DA tx data hashes in the blocks");
+    for ext in extrinsics.iter() {
+        match ext {
+            Ok(extrinsic_details) => {
+                let v_name = extrinsic_details.variant_name()?;
+                if v_name == "submit_data" {
+                    
+                    let data_bytes = DaData::decode(&mut extrinsic_details.field_bytes())?;
+                    // println!("ext data: {:?}", data_bytes);
+
+                    let hash = blake2_256(data_bytes.as_ref());
+                    println!("{}", hex::encode(hash));
+                }
+            },
+            Err(e) => {
+                println!("Encountered an error: {}", e);
+            },
+        }
+       
+    }
+    
     Ok(())
 }
